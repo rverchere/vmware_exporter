@@ -18,8 +18,7 @@ from yamlconfig import YamlConfig
 # Twisted
 from twisted.web.server import Site, NOT_DONE_YET
 from twisted.web.resource import Resource
-from twisted.internet import reactor
-from twisted.internet.task import deferLater
+from twisted.internet import reactor, threads
 
 # VMWare specific imports
 from pyVmomi import vim, vmodl
@@ -53,8 +52,7 @@ class VMWareMetricsResource(Resource):
             if not request.args.get('target', [None])[0]:
                 request.setResponseCode(404)
                 return 'No target defined\r\n'.encode()
-            d = deferLater(reactor, 0, lambda: request)
-            d.addCallback(self.generate_latest_target)
+            d = threads.deferToThread(self.generate_latest_target, request)
             d.addErrback(self.errback, request)
             return NOT_DONE_YET
         else:
