@@ -160,7 +160,7 @@ class VMWareMetricsResource(Resource):
                         labels=['host_name']),
                 }
 
-        print("[{0}] Start collecting vcenter metrics for {1}".format(datetime.utcnow().replace(tzinfo=pytz.utc), target))
+        print("[{0}] Start collecting vmware metrics for {1}".format(datetime.utcnow().replace(tzinfo=pytz.utc), target))
 
         self.si = self._vmware_connect(target, section)
         if not self.si:
@@ -192,9 +192,9 @@ class VMWareMetricsResource(Resource):
         # Fill Hosts Informations
         self._vmware_get_hosts(content, metrics)
 
-        print("[{0}] Stop collecting vcenter metrics for {1}".format(datetime.utcnow().replace(tzinfo=pytz.utc), target))
+        print("[{0}] Stop collecting vmware metrics for {1}".format(datetime.utcnow().replace(tzinfo=pytz.utc), target))
 
-        self._vmware_disconnect()
+        self._vmware_disconnect(self.si)
 
         for metricname, metric in metrics.items():
             yield metric
@@ -224,7 +224,7 @@ class VMWareMetricsResource(Resource):
 
     def _vmware_connect(self, target, section):
         """
-        Connect to Vcenter and get connection
+        Connect to VMWare and get connection
         """
 
         context = None
@@ -244,11 +244,11 @@ class VMWareMetricsResource(Resource):
             print("Caught vmodl fault: " + error.msg)
             return None
 
-    def _vmware_disconnect(self):
+    def _vmware_disconnect(self, si):
         """
-        Disconnect from Vcenter
+        Disconnect from VMWare
         """
-        connect.Disconnect(self.si)
+        connect.Disconnect(si)
 
     def _vmware_perf_metrics(self, content):
         # create a mapping from performance stats to their counterIDs
