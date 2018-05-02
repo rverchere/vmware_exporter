@@ -175,7 +175,7 @@ class VMWareMetricsResource(Resource):
         metric_list['metadata'] = {
                     'vmware_dc_cluster_host_vm_info': GaugeMetricFamily(
                         'vmware_dc_cluster_host_vm_info',
-                        'VMWare datacenter, cluster, host and vm info',
+                        'VMWare datacenter cluster host and vm info',
                         labels=['dc_name', 'cluster_name', 'host_name', 'vm_name']),
                 }
         collect_subsystems = self._collect_subsystems(section, metric_list.keys())
@@ -477,7 +477,7 @@ class VMWareMetricsResource(Resource):
 
     def _vmware_get_metadata(self, content, metadata_metrics):
         """
-        Get Metadata (Datacenter, cluster) information for hosts and VMs
+        Get Metadata (datacenter, cluster) information for hosts and VMs
         """
 
         children = content.rootFolder.childEntity
