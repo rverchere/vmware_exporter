@@ -172,6 +172,12 @@ class VMWareMetricsResource(Resource):
                         'VMWare Host Memory Max availability in Mbytes',
                         labels=['host_name']),
                 }
+        metric_list['metadata'] = {
+                    'vmware_dc_cluster_host_vm_info': GaugeMetricFamily(
+                        'vmware_dc_cluster_host_vm_info',
+                        'VMWare datacenter cluster host and vm info',
+                        labels=['dc_name', 'cluster_name', 'host_name', 'vm_name']),
+                }
         collect_subsystems = self._collect_subsystems(section, metric_list.keys())
 
 
@@ -215,7 +221,10 @@ class VMWareMetricsResource(Resource):
         # Fill Hosts Informations
         if 'hosts' in collect_subsystems:
             self._vmware_get_hosts(content, metrics)
-
+	
+        # Collect cluster metadata
+        if 'metadata' in collect_subsystems:
+            self._vmware_get_metadata(content, metrics)
 
         print("[{0}] Stop collecting vcenter metrics for {1}".format(datetime.utcnow().replace(tzinfo=pytz.utc), target))
 
@@ -463,6 +472,25 @@ class VMWareMetricsResource(Resource):
                                         summary.quickStats.overallMemoryUsage)
                 host_metrics['vmware_host_memory_max'].add_metric([host.name],
                             float(summary.hardware.memorySize) / 1024 / 1024)
+
+
+    def _vmware_get_metadata(self, content, metadata_metrics):
+        """
+        Get Metadata (datacenter, cluster) information for hosts and VMs
+        """
+
+        children = content.rootFolder.childEntity
+        for child in children:  # Iterate though DataCenters
+            dc = child
+            clusters = dc.hostFolder.childEntity
+            for cluster in clusters:  # Iterate through the clusters in the DC
+                hosts = cluster.host
+                for host in hosts:  # Iterate through Hosts in the Cluster
+                    host_name = host.summary.config.name
+                    vms = host.vm
+                    for vm in vms:  # Iterate through each VM on the host
+                        vm_name = vm.summary.config.name
+                        metadata_metrics['vmware_dc_cluster_host_vm_info'].add_metric([dc.name, cluster.name, host_name, vm_name], 1)
 
 
 def main():

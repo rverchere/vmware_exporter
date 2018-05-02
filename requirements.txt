@@ -3,4 +3,5 @@ pytz
 pyvmomi>=6.5
 twisted>=14.0.2
 yamlconfig
+pyasn1
 service-identity
