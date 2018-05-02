@@ -222,10 +222,9 @@ class VMWareMetricsResource(Resource):
         if 'hosts' in collect_subsystems:
             self._vmware_get_hosts(content, metrics)
 	
-	# Collect cluster metadata
-	if 'metadata' in collect_subsystems:
-	    self._vmware_get_metadata(content, metrics)
-
+        # Collect cluster metadata
+        if 'metadata' in collect_subsystems:
+            self._vmware_get_metadata(content, metrics)
 
         print("[{0}] Stop collecting vcenter metrics for {1}".format(datetime.utcnow().replace(tzinfo=pytz.utc), target))
 
