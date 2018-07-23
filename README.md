@@ -7,6 +7,12 @@ Get VMWare VCenter information:
 - Datastore size and other stuff
 - Basic VM and Host metrics
 
+## Archive
+
+Please note this repository is no longer maintained.
+
+Please go to https://github.com/pryorda/vmware_exporter for new comments.
+
 ## Usage
 
 - install with `$ python setup.py install` or `$ pip install vmware_exporter` (Installing from pip will install an old version. This is likely something I wont persue)
